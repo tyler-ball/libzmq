@@ -46,6 +46,8 @@
 #define ZMQ_ATOMIC_COUNTER_WINDOWS
 #elif (defined ZMQ_HAVE_SOLARIS || defined ZMQ_HAVE_NETBSD || defined ZMQ_HAVE_GNU)
 #define ZMQ_ATOMIC_COUNTER_ATOMIC_H
+#elif defined ZMQ_HAVE_AIX
+#define ZMQ_ATOMIC_COUNTER_AIX
 #elif defined __tile__
 #define ZMQ_ATOMIC_COUNTER_TILE
 #else
@@ -60,6 +62,8 @@
 #include "windows.hpp"
 #elif defined ZMQ_ATOMIC_COUNTER_ATOMIC_H
 #include <atomic.h>
+#elif defined ZMQ_ATOMIC_COUNTER_AIX
+#include <sys/atomic_op.h>
 #elif defined ZMQ_ATOMIC_COUNTER_TILE
 #include <arch/atomic.h>
 #endif
@@ -105,6 +109,9 @@ namespace zmq
 #elif defined ZMQ_ATOMIC_COUNTER_ATOMIC_H
             integer_t new_value = atomic_add_32_nv (&value, increment_);
             old_value = new_value - increment_;
+#elif defined ZMQ_ATOMIC_COUNTER_AIX
+            printf("ZMQ_ATOMIC_COUNTER_AIX\n");
+            old_value = fetch_and_add ((atomic_p) &value, increment_);
 #elif defined ZMQ_ATOMIC_COUNTER_TILE
             old_value = arch_atomic_add (&value, increment_);
 #elif defined ZMQ_ATOMIC_COUNTER_X86
@@ -154,6 +161,10 @@ namespace zmq
             int32_t delta = - ((int32_t) decrement);
             integer_t nv = atomic_add_32_nv (&value, delta);
             return nv != 0;
+#elif defined ZMQ_ATOMIC_COUNTER_AIX
+            int32_t delta = - ((int32_t) decrement);
+            integer_t old = fetch_and_add((atomic_p) &value, delta);
+            return old - decrement != 0;
 #elif defined ZMQ_ATOMIC_COUNTER_TILE
             int32_t delta = - ((int32_t) decrement);
             integer_t nv = arch_atomic_add (&value, delta);
@@ -224,6 +235,7 @@ namespace zmq
 #undef ZMQ_ATOMIC_COUNTER_ARM
 #undef ZMQ_ATOMIC_COUNTER_WINDOWS
 #undef ZMQ_ATOMIC_COUNTER_ATOMIC_H
+#undef ZMQ_ATOMIC_COUNTER_AIX
 #undef ZMQ_ATOMIC_COUNTER_TILE
 
 #endif
