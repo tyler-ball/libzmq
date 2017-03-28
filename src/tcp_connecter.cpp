@@ -183,7 +183,7 @@ void zmq::tcp_connecter_t::timer_event (int id_)
 void zmq::tcp_connecter_t::start_connecting ()
 {
     //  Open the connecting socket.
-    const int rc = open ();
+    const int rc = openn ();
 
     //  Connect may succeed in synchronous manner.
     if (rc == 0) {
@@ -244,7 +244,7 @@ int zmq::tcp_connecter_t::get_new_reconnect_ivl ()
     return interval;
 }
 
-int zmq::tcp_connecter_t::open ()
+int zmq::tcp_connecter_t::openn ()
 {
     zmq_assert (s == retired_fd);
 

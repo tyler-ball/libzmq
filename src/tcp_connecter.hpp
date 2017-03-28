@@ -84,7 +84,7 @@ namespace zmq
         //  Open TCP connecting socket. Returns -1 in case of error,
         //  0 if connect was successful immediately. Returns -1 with
         //  EAGAIN errno if async connect was launched.
-        int open ();
+        int openn ();
 
         //  Close the connecting socket.
         void close ();
