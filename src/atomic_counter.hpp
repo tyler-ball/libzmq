@@ -110,7 +110,6 @@ namespace zmq
             integer_t new_value = atomic_add_32_nv (&value, increment_);
             old_value = new_value - increment_;
 #elif defined ZMQ_ATOMIC_COUNTER_AIX
-            printf("ZMQ_ATOMIC_COUNTER_AIX\n");
             old_value = fetch_and_add ((atomic_p) &value, increment_);
 #elif defined ZMQ_ATOMIC_COUNTER_TILE
             old_value = arch_atomic_add (&value, increment_);
